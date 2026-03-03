@@ -116,7 +116,7 @@ app.get('/food-entry/create', async function (req, res) {
 
 app.post('/food-entry/create', async function (req, res) {
 
-
+  console.log(req.body)
   const connection = await dbConnection.getConnection();
   try {
     await connection.beginTransaction();
@@ -126,7 +126,7 @@ app.post('/food-entry/create', async function (req, res) {
             VALUES (?, ?, ?, ?, ?, ?);`
     const bindings = [req.body.dateTime, req.body.foodName, req.body.calories,
     req.body.meal_id, req.body.servingSize, req.body.unit];
-
+      console.log(bindings)
     // create the new food entry
     const [results] = await connection.execute(sql, bindings);
     const newFoodEntryID = results.insertId;
@@ -141,6 +141,8 @@ app.post('/food-entry/create', async function (req, res) {
     await connection.commit(); // make all changes done to the database permanent
   } catch (e) {
     await connection.rollback();
+    console.error(e)
+    res.send("Error");
   } finally {
     connection.release(); // release the connection so that it goes back to the pool
   }
